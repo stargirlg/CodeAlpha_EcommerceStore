@@ -1,4 +1,4 @@
-# CodeAlpha_EcommerceStore# CodeAlpha - Simple E-Commerce Store
+# CodeAlpha_EcommerceStore
 
 A full-stack e-commerce web application built as part of the **CodeAlpha Full Stack Development Internship**[cite: 1]. This platform features interactive product listings, real-time cart handling, user registration and login, and transactional order processing backed by an SQLite relational database[cite: 1, 2].
 
