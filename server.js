@@ -6,16 +6,18 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3000;
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// Database Connection
 const db = new sqlite3.Database('./store.db', (err) => {
   if (err) console.error('Database connection error:', err);
   else console.log('SQLite database connected.');
 });
 
-// Setup Tables & Seed Sample Products
+// Setup Tables & Seed Initial Products
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, price REAL, description TEXT
@@ -40,7 +42,7 @@ db.serialize(() => {
   });
 });
 
-// 1. Get Product List API
+// 1. Get Product List API[cite: 1]
 app.get('/api/products', (req, res) => {
   db.all("SELECT * FROM products", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -48,9 +50,11 @@ app.get('/api/products', (req, res) => {
   });
 });
 
-// 2. User Registration API
+// 2. User Registration API[cite: 1, 2]
 app.post('/api/register', (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ error: "Username and password required" });
+
   db.run("INSERT INTO users (username, password) VALUES (?, ?)", [username, password], function(err) {
     if (err) return res.status(400).json({ error: "Username already exists" });
     res.json({ message: "User registered successfully!" });
@@ -66,7 +70,7 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// 4. Order Processing API
+// 4. Order Processing API[cite: 1]
 app.post('/api/orders', (req, res) => {
   const { username, items, total } = req.body;
   db.run("INSERT INTO orders (username, items, total) VALUES (?, ?, ?)", 
